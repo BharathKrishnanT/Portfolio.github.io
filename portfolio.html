@@ -1,0 +1,1588 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bharath Krishnan T | Personal Portfolio</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #0A0A0A;
+            color: #E2E8F0; /* slate-200 */
+        }
+        /* Custom styles to mimic shadcn/ui and for general aesthetics */
+        .card {
+            background-color: #111111;
+            border: 1px solid #27272A; /* zinc-800 */
+            border-radius: 0.75rem;
+        }
+        .badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            font-size: 0.75rem;
+            font-weight: 500;
+            line-height: 1;
+            text-align: center;
+            white-space: nowrap;
+            vertical-align: baseline;
+            border-radius: 9999px;
+            border: 1px solid #27272A;
+            background-color: transparent;
+            color: #A1A1AA; /* zinc-400 */
+            transition: all 0.2s ease-in-out;
+        }
+        .badge:hover {
+            background-color: #27272A;
+            color: #FFFFFF;
+        }
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            padding: 0.75rem 1.5rem;
+            transition: all 0.2s ease-in-out;
+            border: 1px solid transparent;
+        }
+        .btn-primary {
+            background-color: #FAFAFA; /* zinc-50 */
+            color: #0A0A0A;
+            border-color: #3F3F46; /* zinc-700 */
+        }
+        .btn-primary:hover {
+            background-color: #E4E4E7; /* zinc-200 */
+        }
+        .btn-secondary {
+            background-color: transparent;
+            color: #FAFAFA;
+            border-color: #3F3F46;
+        }
+        .btn-secondary:hover {
+            background-color: #18181B; /* zinc-900 */
+        }
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 1.25rem;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background-color: #27272A; /* zinc-800 */
+            transform: translateX(-50%);
+        }
+        .timeline-dot {
+            position: absolute;
+            left: 1.25rem;
+            top: 0.25rem;
+            width: 1rem;
+            height: 1rem;
+            border-radius: 9999px;
+            background-color: #3F3F46; /* zinc-700 */
+            border: 3px solid #0A0A0A;
+            transform: translateX(-50%);
+        }
+        .fade-in-up {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.5s ease-out, transform 0.5s ease-out;
+        }
+        .fade-in-up.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        /* New styles for blur text animation */
+        .blur-text-target .word {
+            display: inline-block;
+            opacity: 0;
+            filter: blur(5px);
+            transform: translateY(20px);
+            transition: opacity 0.4s ease-out, filter 0.4s ease-out, transform 0.4s ease-out;
+            will-change: opacity, filter, transform;
+        }
+        .blur-text-target.visible .word {
+            opacity: 1;
+            filter: blur(0px);
+            transform: translateY(0px);
+        }
+
+        /* --- NEW: TILT CARD ANIMATION STYLES --- */
+        :root {
+            --card-opacity: 0.2;
+            --card-transition-duration: 250ms;
+        }
+
+        .project-card-wrapper {
+            --pointer-x: 50%;
+            --pointer-y: 50%;
+            --background-x: 50%;
+            --background-y: 50%;
+            --rotate-x: 0deg;
+            --rotate-y: 0deg;
+            --card-opacity: 0;
+            perspective: 1000px;
+            position: relative;
+            overflow: hidden;
+            border-radius: 0.75rem; 
+        }
+
+        .project-card-wrapper:hover {
+            --card-opacity: 0.2;
+        }
+
+        .project-card {
+            position: relative;
+            background-color: #111111;
+            border: 1px solid #27272A;
+            border-radius: 0.75rem;
+            transition: transform var(--card-transition-duration) ease-out;
+            transform: rotateX(var(--rotate-y)) rotateY(var(--rotate-x));
+            width: 100%;
+            height: 100%;
+        }
+
+        .project-card-wrapper .card-glare {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border-radius: inherit;
+            background-image: radial-gradient(
+                circle at var(--pointer-x) var(--pointer-y),
+                hsla(0,0%,100%,0.2) 0%,
+                hsla(0,0%,100%,0) 50%
+            );
+            opacity: var(--card-opacity);
+            transition: opacity var(--card-transition-duration) ease-in-out;
+        }
+
+        .project-card-wrapper .card-background {
+             content: '';
+            position: absolute;
+            top: -1px;
+            left: -1px;
+            right: -1px;
+            bottom: -1px;
+            border-radius: inherit;
+            background-image: radial-gradient(
+                farthest-side circle at var(--pointer-x) var(--pointer-y),
+                hsla(266, 100%, 90%, var(--card-opacity)) 4%,
+                hsla(266, 50%, 80%, calc(var(--card-opacity) * 0.75)) 10%,
+                hsla(266, 25%, 70%, calc(var(--card-opacity) * 0.5)) 50%,
+                hsla(266, 0%, 60%, 0) 100%
+            );
+            transition: opacity var(--card-transition-duration) ease-in-out;
+            opacity: 0;
+        }
+
+        .project-card-wrapper.active .card-background {
+            opacity: 1;
+        }
+
+        .project-card-wrapper.active .project-card {
+            --card-transition-duration: 100ms;
+        }
+
+    </style>
+</head>
+<body class="antialiased">
+    <!-- Fluid Cursor Canvas -->
+    <canvas id="fluid-canvas" class="fixed top-0 left-0 w-full h-full pointer-events-none z-40"></canvas>
+
+    <!-- Header -->
+    <header id="header" class="sticky top-0 z-50 w-full backdrop-blur-md bg-black/50 border-b border-zinc-800 transition-all duration-300">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex-shrink-0">
+                    <a href="#" class="text-xl font-bold text-slate-100">BKT</a>
+                </div>
+                <nav class="hidden md:flex md:space-x-8">
+                    <a href="#about" class="text-sm font-medium text-slate-400 hover:text-slate-100 transition-colors">About</a>
+                    <a href="#experience" class="text-sm font-medium text-slate-400 hover:text-slate-100 transition-colors">Experience</a>
+                    <a href="#projects" class="text-sm font-medium text-slate-400 hover:text-slate-100 transition-colors">Projects</a>
+                    <a href="#contact" class="text-sm font-medium text-slate-400 hover:text-slate-100 transition-colors">Contact</a>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="container mx-auto px-4 sm:px-6 lg:px-8">
+        
+        <!-- Hero Section -->
+        <section id="hero" class="relative flex items-center justify-center min-h-screen text-center overflow-hidden">
+            <canvas id="hero-canvas" class="absolute top-0 left-0 w-full h-full z-0"></canvas>
+            <div class="relative z-10 flex flex-col items-center">
+                <h1 id="hero-name" class="text-5xl md:text-7xl font-bold bg-clip-text text-transparent bg-gradient-to-b from-white to-zinc-400 pb-2"></h1>
+                <p id="hero-role" class="mt-4 text-lg md:text-xl text-slate-300 max-w-2xl blur-text-target"></p>
+                <div id="hero-contact" class="mt-8 flex flex-wrap justify-center items-center gap-4">
+                    <!-- Contact links will be injected here -->
+                </div>
+            </div>
+        </section>
+
+        <!-- About Section -->
+        <section id="about" class="py-24 md:py-32 fade-in-up">
+            <div class="grid md:grid-cols-3 gap-12 items-start">
+                <div class="md:col-span-1 flex flex-col items-center text-center">
+                    <img id="headshot" src="" alt="Bharath Krishnan T" class="rounded-full h-40 w-40 object-cover mb-4 border-2 border-zinc-700" onerror="this.onerror=null;this.src='https://placehold.co/160x160/18181B/FAFAFA?text=BKT';">
+                    <div class="flex flex-col space-y-2 w-48">
+                        <a href="resume.jpg" download="Bharath_Krishnan_Resume.jpg" class="btn btn-secondary text-xs">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mr-2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/></svg>
+                            Download Resume
+                        </a>
+                        <button id="download-schema" class="btn btn-secondary text-xs">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mr-2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/></svg>
+                            Download Data
+                        </button>
+                        <a id="download-link" class="hidden"></a>
+                    </div>
+                </div>
+                <div class="md:col-span-2">
+                    <h2 class="text-3xl font-bold mb-6 text-slate-100 blur-text-target">About Me</h2>
+                    <p id="about-mission" class="text-slate-400 leading-relaxed mb-8 blur-text-target"></p>
+                    <h3 class="text-xl font-semibold mb-4 text-slate-200">Key Skills</h3>
+                    <div id="skills-container" class="flex flex-wrap gap-2">
+                        <!-- Skills will be injected here -->
+                    </div>
+                    <h3 class="text-xl font-semibold mt-8 mb-4 text-slate-200">Programming Languages</h3>
+                    <div id="languages-container" class="flex flex-wrap gap-2">
+                        <!-- Languages will be injected here -->
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Experience & Education Section -->
+        <section id="experience" class="py-24 md:py-32 fade-in-up">
+            <h2 class="text-3xl font-bold text-center mb-16 text-slate-100 blur-text-target">Experience & Education</h2>
+            <div class="relative max-w-3xl mx-auto timeline">
+                <!-- Timeline items will be injected here -->
+            </div>
+        </section>
+
+        <!-- Projects Section -->
+        <section id="projects" class="py-24 md:py-32">
+            <h2 class="text-3xl font-bold text-center mb-16 text-slate-100 blur-text-target">Projects</h2>
+            <div id="projects-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- Project cards will be injected here -->
+            </div>
+        </section>
+
+        <!-- Contact Section -->
+        <section id="contact" class="py-24 md:py-32 text-center fade-in-up">
+            <div class="max-w-2xl mx-auto">
+                <h2 class="text-3xl font-bold text-slate-100 blur-text-target">Get In Touch</h2>
+                <p class="mt-4 mb-8 text-slate-400 blur-text-target text-lg">I'm always open to discussing new projects, creative ideas, or opportunities to be part of an ambitious vision. Feel free to reach out.</p>
+                <form id="contact-form" class="mt-10 text-left space-y-6">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                        <div>
+                            <label for="contact-name" class="sr-only">Your Name</label>
+                            <input type="text" id="contact-name" name="name" placeholder="Your Name" required class="w-full bg-zinc-900 border border-zinc-700 rounded-md p-3 text-sm placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all">
+                        </div>
+                        <div>
+                            <label for="contact-email" class="sr-only">Your Email</label>
+                            <input type="email" id="contact-email" name="email" placeholder="Your Email" required class="w-full bg-zinc-900 border border-zinc-700 rounded-md p-3 text-sm placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all">
+                        </div>
+                    </div>
+                    <div>
+                        <label for="contact-message" class="sr-only">Your Message</label>
+                        <textarea id="contact-message" name="message" rows="5" placeholder="Your Message" required class="w-full bg-zinc-900 border border-zinc-700 rounded-md p-3 text-sm placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all"></textarea>
+                    </div>
+                    <div class="text-center">
+                        <button type="submit" class="btn btn-primary text-base">Send Message</button>
+                    </div>
+                </form>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="border-t border-zinc-800">
+        <div class="container mx-auto py-6 px-4 sm:px-6 lg:px-8 text-center text-sm text-slate-500">
+            <p>&copy; <span id="footer-year"></span> Bharath Krishnan T. All Rights Reserved.</p>
+        </div>
+    </footer>
+
+    <!-- Chatbot Widget -->
+    <div class="fixed bottom-6 right-6 z-50">
+        <!-- Chat Bubble -->
+        <div id="chat-window" class="hidden absolute bottom-20 right-0 w-80 sm:w-96 bg-[#111111] border border-zinc-800 rounded-lg shadow-2xl flex flex-col transition-all duration-300 transform translate-y-4 opacity-0">
+            <div class="p-4 border-b border-zinc-800">
+                <h3 class="font-semibold text-white">Chat with my Assistant</h3>
+                <p class="text-xs text-slate-400">Ask me about Bharath's work</p>
+            </div>
+            <div id="chat-messages" class="flex-1 p-4 space-y-4 overflow-y-auto h-80">
+                <!-- Messages will be injected here -->
+            </div>
+            <div class="p-4 border-t border-zinc-800">
+                <form id="chat-form" class="flex items-center">
+                    <input type="text" id="chat-input" placeholder="Ask a question..." class="flex-1 bg-zinc-800 text-white placeholder-zinc-500 px-3 py-2 text-sm rounded-l-md border-zinc-700 focus:ring-1 focus:ring-blue-500 focus:outline-none">
+                    <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-r-md text-sm font-semibold">Send</button>
+                </form>
+            </div>
+        </div>
+        <!-- Toggle Button -->
+        <button id="chat-toggle" class="bg-blue-600 text-white rounded-full p-3 shadow-lg hover:bg-blue-700 transition-colors">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 21 1.9-5.7a8.5 8.5 0 1 1 3.8 3.8z"></path></svg>
+        </button>
+    </div>
+
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+
+            // --- 1. CONTENT SCHEMA ---
+            const resumeData = {
+                personal: {
+                    name: "Bharath Krishnan T",
+                    role: "Generative AI Engineer & UI/UX Designer",
+                    headshot: "photo.jpg",
+                    resume: "resume.jpg",
+                    contact: {
+                        email: "mailto:bharathkrishnan.t@gmail.com",
+                        phone: "tel:+919361478894",
+                        linkedin: "https://www.linkedin.com/in/bharath-krishnan-t-9bb641340",
+                        github: "https://github.com/BharathKrishnanT",
+                        instagram: "https://www.instagram.com/dark__seid_"
+                    }
+                },
+                about: {
+                    mission: "Dynamic and versatile professional with expertise spanning Generative AI, prompt engineering, and advanced programming in C, C++, and Python. I have a proven track record in designing and implementing intelligent systems and machine learning models that drive innovation and efficiency. With a robust background in UI/UX design, I adeptly translate complex technical concepts into intuitive, user-centered digital experiences.",
+                    skills: ["Generative AI", "Prompt Engineering", "Machine Learning", "UI/UX Design", "Problem Solving"],
+                    programmingLanguages: ["Python", "C++", "C", "Java", "JSON"]
+                },
+                experience: [
+                    {
+                        role: "Bachelor of Engineering, ECE",
+                        company: "M Kumarasamy College of Engineering, Karur",
+                        period: "2024 – 2028",
+                        description: "Pursuing a degree in Electronics and Communication Engineering with a focus on machine learning, AI, and system design."
+                    },
+                    {
+                        role: "PHP Framework Certification",
+                        company: "Self-Paced",
+                        period: "Ongoing",
+                        description: "Completed coursework and projects covering Machine Learning, Generative AI, and advanced Prompt Engineering techniques."
+                    }
+                ],
+                projects: [
+                    {
+                        title: "Liquid Fertilizer Manufacturing System",
+                        description: "An automated IoT system to precisely control and monitor the manufacturing process of liquid fertilizers, ensuring quality and efficiency.",
+                        tags: ["Automation", "Embedded Systems", "IoT"],
+                        link: "https://github.com/BharathKrishnanT/Liquid-Fertilizer-manufacturing-system-"
+                    },
+                    {
+                        title: "E-commerce Website",
+                        description: "A full-featured e-commerce platform with a secure payment gateway, focusing on a seamless and intuitive user shopping experience.",
+                        tags: ["Web Dev", "Payment Gateway", "E-commerce"],
+                        link: "https://github.com/BharathKrishnanT/E-commerce-website-with-payment-gateway"
+                    },
+                    {
+                        title: "Real-time Object Detection",
+                        description: "A computer vision application that detects and tracks objects in real-time video streams, built with OpenCV for high performance.",
+                        tags: ["Computer Vision", "OpenCV", "Python"],
+                        link: "https://github.com/BharathKrishnanT/Real-time-Object-Detection-CV"
+                    },
+                    {
+                        title: "Laboratory Management System",
+                        description: "A comprehensive web application to streamline laboratory operations, manage data, and improve workflow efficiency for researchers.",
+                        tags: ["Management System", "Web App", "Database"],
+                        link: "https://github.com/BharathKrishnanT/Laboratory-management-system-"
+                    }
+                ]
+            };
+
+            // --- 2. DYNAMIC CONTENT RENDERING ---
+            function renderContent() {
+                // Hero
+                document.getElementById('hero-name').textContent = resumeData.personal.name;
+                document.getElementById('hero-role').textContent = resumeData.personal.role;
+                const heroContact = document.getElementById('hero-contact');
+                heroContact.innerHTML = `
+                    <a href="${resumeData.personal.contact.email}" class="btn btn-secondary">Email</a>
+                    <a href="${resumeData.personal.contact.phone}" class="btn btn-secondary">Phone</a>
+                    <a href="${resumeData.personal.contact.linkedin}" target="_blank" class="btn btn-secondary">LinkedIn</a>
+                    <a href="${resumeData.personal.contact.github}" target="_blank" class="btn btn-secondary">GitHub</a>
+                    <a href="${resumeData.personal.contact.instagram}" target="_blank" class="btn btn-secondary">Instagram</a>
+                `;
+
+                // About
+                document.getElementById('headshot').src = resumeData.personal.headshot;
+                document.getElementById('about-mission').textContent = resumeData.about.mission;
+                const skillsContainer = document.getElementById('skills-container');
+                skillsContainer.innerHTML = resumeData.about.skills.map(skill => `<span class="badge">${skill}</span>`).join('');
+
+                const languagesContainer = document.getElementById('languages-container');
+                languagesContainer.innerHTML = resumeData.about.programmingLanguages.map(lang => `<span class="badge">${lang}</span>`).join('');
+
+                // Experience
+                const experienceContainer = document.querySelector('#experience .timeline');
+                experienceContainer.innerHTML = resumeData.experience.map(item => `
+                    <div class="relative pl-12 pb-12">
+                        <div class="timeline-dot"></div>
+                        <p class="text-sm text-slate-400 mb-1">${item.period}</p>
+                        <h3 class="text-lg font-semibold text-slate-100">${item.role}</h3>
+                        <p class="text-md text-slate-300 mb-2">${item.company}</p>
+                        <p class="text-sm text-slate-400 blur-text-target">${item.description}</p>
+                    </div>
+                `).join('');
+
+
+                // Projects
+                const projectsContainer = document.getElementById('projects-container');
+                projectsContainer.innerHTML = resumeData.projects.map(project => `
+                    <div class="project-card-wrapper">
+                        <div class="card-background"></div>
+                        <a href="${project.link}" target="_blank" class="project-card p-6 block">
+                            <div class="card-glare"></div>
+                            <div class="relative z-10">
+                               <h3 class="text-lg font-semibold text-slate-100 mb-2">${project.title}</h3>
+                                <p class="text-sm text-slate-400 mb-4 blur-text-target">${project.description}</p>
+                                <div class="flex flex-wrap gap-2">
+                                    ${project.tags.map(tag => `<span class="badge">${tag}</span>`).join('')}
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+                `).join('');
+                
+                // Footer Year
+                document.getElementById('footer-year').textContent = new Date().getFullYear();
+            }
+
+            renderContent();
+
+            // --- 3. THREE.JS HERO BACKGROUND ---
+            let scene, camera, renderer, points;
+            const heroSection = document.getElementById('hero');
+            const canvas = document.getElementById('hero-canvas');
+            
+            function initThree() {
+                scene = new THREE.Scene();
+                camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+                camera.position.z = 5;
+                renderer = new THREE.WebGLRenderer({ canvas: canvas, alpha: true });
+                renderer.setSize(window.innerWidth, window.innerHeight);
+                const geometry = new THREE.IcosahedronGeometry(2, 3);
+                const material = new THREE.PointsMaterial({ color: 0x4A5568, size: 0.015, transparent: true, blending: THREE.AdditiveBlending, depthWrite: false });
+                points = new THREE.Points(geometry, material);
+                scene.add(points);
+                window.addEventListener('resize', onWindowResize, false);
+                heroSection.addEventListener('mousemove', onMouseMove, false);
+            }
+            function onWindowResize() {
+                camera.aspect = window.innerWidth / window.innerHeight;
+                camera.updateProjectionMatrix();
+                renderer.setSize(window.innerWidth, window.innerHeight);
+            }
+            function onMouseMove(event) {
+                const mouseX = (event.clientX / window.innerWidth) * 2 - 1;
+                const mouseY = -(event.clientY / window.innerHeight) * 2 + 1;
+                if (points) {
+                    points.rotation.x = mouseY * 0.05;
+                    points.rotation.y = mouseX * 0.05;
+                }
+            }
+            function animate() {
+                requestAnimationFrame(animate);
+                if (points) {
+                    points.rotation.x += 0.0001;
+                    points.rotation.y += 0.0002;
+                }
+                renderer.render(scene, camera);
+            }
+            initThree();
+            animate();
+
+            // --- 4. INTERACTIVITY & UTILS ---
+            const contactForm = document.getElementById('contact-form');
+            contactForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                const name = document.getElementById('contact-name').value;
+                const email = document.getElementById('contact-email').value;
+                const message = document.getElementById('contact-message').value;
+                const recipientEmail = resumeData.personal.contact.email.replace('mailto:', '');
+                const subject = encodeURIComponent(`Message from ${name} via Portfolio`);
+                const body = encodeURIComponent(`Name: ${name}\nEmail: ${email}\n\nMessage:\n${message}`);
+                const mailtoLink = `mailto:${recipientEmail}?subject=${subject}&body=${body}`;
+                window.location.href = mailtoLink;
+            });
+
+            const downloadBtn = document.getElementById('download-schema');
+            const downloadLink = document.getElementById('download-link');
+            downloadBtn.addEventListener('click', () => {
+                const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(resumeData, null, 2));
+                downloadLink.setAttribute("href", dataStr);
+                downloadLink.setAttribute("download", "resume_data.json");
+                downloadLink.click();
+            });
+            const fadeUpObserver = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('visible');
+                    }
+                });
+            }, { threshold: 0.1 });
+            document.querySelectorAll('.fade-in-up').forEach(el => {
+                fadeUpObserver.observe(el);
+            });
+            
+            function setupBlurTextAnimation() {
+                const blurTextTargets = document.querySelectorAll('.blur-text-target');
+                blurTextTargets.forEach(target => {
+                    if(target.querySelector('.word')) return;
+                    const text = target.textContent;
+                    const words = text.split(' ').filter(w => w.length > 0);
+                    target.innerHTML = '';
+                    words.forEach((word, index) => {
+                        const span = document.createElement('span');
+                        span.className = 'word';
+                        span.textContent = word;
+                        target.appendChild(span);
+                        if (index < words.length - 1) {
+                           target.appendChild(document.createTextNode(' '));
+                        }
+                    });
+                });
+                const blurTextObserver = new IntersectionObserver((entries) => {
+                    entries.forEach(entry => {
+                        const target = entry.target;
+                        if (entry.isIntersecting) {
+                            if (!target.dataset.delaysSet) {
+                                const words = target.querySelectorAll('.word');
+                                words.forEach((word, index) => {
+                                    word.style.transitionDelay = `${index * 100}ms`;
+                                });
+                                target.dataset.delaysSet = 'true';
+                            }
+                            target.classList.add('visible');
+                        } else {
+                            target.classList.remove('visible');
+                        }
+                    });
+                }, { threshold: 0.2 });
+                blurTextTargets.forEach(el => {
+                    blurTextObserver.observe(el);
+                });
+            }
+            setupBlurTextAnimation();
+
+            // --- 5. TILT ANIMATION LOGIC ---
+            class TiltAnimation {
+                constructor(wrapper) {
+                    this.wrapper = wrapper;
+                    this.card = wrapper.querySelector('.project-card');
+                    this.rafId = null;
+
+                    this.clamp = (value, min = 0, max = 100) => Math.min(Math.max(value, min), max);
+                    this.round = (value, precision = 3) => parseFloat(value.toFixed(precision));
+                    this.adjust = (value, fromMin, fromMax, toMin, toMax) => this.round(toMin + ((toMax - toMin) * (value - fromMin)) / (fromMax - fromMin));
+                    this.easeInOutCubic = x => (x < 0.5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2);
+
+                    this.onPointerMove = this.onPointerMove.bind(this);
+                    this.onPointerEnter = this.onPointerEnter.bind(this);
+                    this.onPointerLeave = this.onPointerLeave.bind(this);
+
+                    this.card.addEventListener('pointermove', this.onPointerMove);
+                    this.card.addEventListener('pointerenter', this.onPointerEnter);
+                    this.card.addEventListener('pointerleave', this.onPointerLeave);
+                }
+
+                updateTransform(offsetX, offsetY) {
+                    const { clientWidth: width, clientHeight: height } = this.card;
+                    const percentX = this.clamp((100 / width) * offsetX);
+                    const percentY = this.clamp((100 / height) * offsetY);
+                    const centerX = percentX - 50;
+                    const centerY = percentY - 50;
+
+                    const properties = {
+                        '--pointer-x': `${percentX}%`,
+                        '--pointer-y': `${percentY}%`,
+                        '--rotate-x': `${this.round(centerY / 4)}deg`,
+                        '--rotate-y': `${this.round(-(centerX / 5))}deg`,
+                    };
+                    
+                    Object.entries(properties).forEach(([property, value]) => {
+                        this.wrapper.style.setProperty(property, value);
+                    });
+                }
+
+                createSmoothAnimation(duration, startX, startY) {
+                    const startTime = performance.now();
+                    const targetX = this.wrapper.clientWidth / 2;
+                    const targetY = this.wrapper.clientHeight / 2;
+
+                    const animationLoop = (currentTime) => {
+                        const elapsed = currentTime - startTime;
+                        const progress = this.clamp(elapsed / duration);
+                        const easedProgress = this.easeInOutCubic(progress);
+
+                        const currentX = this.adjust(easedProgress, 0, 1, startX, targetY);
+                        const currentY = this.adjust(easedProgress, 0, 1, startY, targetY);
+
+                        this.updateTransform(currentX, currentY);
+
+                        if (progress < 1) {
+                            this.rafId = requestAnimationFrame(animationLoop);
+                        }
+                    };
+                    this.rafId = requestAnimationFrame(animationLoop);
+                }
+                
+                cancelAnimation() {
+                    if (this.rafId) {
+                        cancelAnimationFrame(this.rafId);
+                        this.rafId = null;
+                    }
+                }
+
+                onPointerMove(event) {
+                    const rect = this.card.getBoundingClientRect();
+                    this.updateTransform(event.clientX - rect.left, event.clientY - rect.top);
+                }
+
+                onPointerEnter() {
+                    this.cancelAnimation();
+                    this.wrapper.classList.add('active');
+                }
+
+                onPointerLeave(event) {
+                     this.createSmoothAnimation(600, event.offsetX, event.offsetY);
+                     this.wrapper.classList.remove('active');
+                }
+            }
+
+            // Initialize tilt for all project cards
+            document.querySelectorAll('.project-card-wrapper').forEach(wrapper => {
+                new TiltAnimation(wrapper);
+            });
+
+            // --- 6. CHATBOT ---
+            const chatWindow = document.getElementById('chat-window');
+            const chatToggle = document.getElementById('chat-toggle');
+            const chatForm = document.getElementById('chat-form');
+            const chatInput = document.getElementById('chat-input');
+            const chatMessages = document.getElementById('chat-messages');
+            chatToggle.addEventListener('click', () => {
+                const isHidden = chatWindow.classList.contains('hidden');
+                if (isHidden) {
+                    chatWindow.classList.remove('hidden');
+                    setTimeout(() => {
+                        chatWindow.classList.remove('translate-y-4', 'opacity-0');
+                    }, 10);
+                    if (chatMessages.children.length === 0) {
+                       addMessage("Hello! How can I help you? Ask about skills, projects, or contact info.", 'bot');
+                    }
+                } else {
+                    chatWindow.classList.add('translate-y-4', 'opacity-0');
+                    setTimeout(() => {
+                        chatWindow.classList.add('hidden');
+                        chatMessages.innerHTML = '';
+                    }, 300);
+                }
+            });
+            chatForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                const userInput = chatInput.value.trim();
+                if (!userInput) return;
+                addMessage(userInput, 'user');
+                chatInput.value = '';
+                setTimeout(() => {
+                    const botResponse = getBotResponse(userInput);
+                    addMessage(botResponse, 'bot');
+                }, 600);
+            });
+            function addMessage(text, sender) {
+                const messageEl = document.createElement('div');
+                messageEl.className = `flex ${sender === 'user' ? 'justify-end' : 'justify-start'}`;
+                const bubbleClass = sender === 'user' ? 'bg-blue-600 text-white' : 'bg-zinc-700 text-slate-200';
+                messageEl.innerHTML = `<div class="max-w-[80%] p-3 rounded-lg ${bubbleClass} text-sm">${text}</div>`;
+                chatMessages.appendChild(messageEl);
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+            }
+            function getBotResponse(input) {
+                const i = input.toLowerCase();
+                if (i.includes('hello') || i.includes('hi')) {
+                    return "Hello there! You can ask me about Bharath's skills, projects, or how to get in touch with him.";
+                }
+                if (i.includes('skill') || i.includes('tech') || i.includes('language')) {
+                    const skillsList = resumeData.about.skills.slice(0, 3).join(', ');
+                    const langList = resumeData.about.programmingLanguages.slice(0, 3).join(', ');
+                    return `Bharath's key skills include ${skillsList}. He is also proficient in languages like ${langList}.`;
+                }
+                if (i.includes('project') || i.includes('work')) {
+                    const projectTitle = resumeData.projects[0].title;
+                    return `He has worked on several interesting projects, like the "${projectTitle}". Check out the "Projects" section for more details!`;
+                }
+                if (i.includes('contact') || i.includes('email') || i.includes('phone')) {
+                    return `You can email Bharath at <a href="${resumeData.personal.contact.email}" class="underline">${resumeData.personal.contact.email.replace('mailto:', '')}</a> or call him at ${resumeData.personal.contact.phone.replace('tel:','')}.`;
+                }
+                if (i.includes('resume')) {
+                    return `You can download Bharath's resume from the "About Me" section or by clicking this link: <a href="${resumeData.personal.resume}" download="Bharath_Krishnan_Resume.jpg" class="underline">Download Now</a>.`;
+                }
+                return "I'm a simple bot, try asking about 'skills', 'projects', or 'contact' info.";
+            }
+
+            // --- 7. FLUID CURSOR ANIMATION ---
+            function initFluidCursor() {
+                const canvas = document.getElementById('fluid-canvas');
+                if (!canvas) return;
+
+                function pointerPrototype() {
+                    this.id = -1;
+                    this.texcoordX = 0;
+                    this.texcoordY = 0;
+                    this.prevTexcoordX = 0;
+                    this.prevTexcoordY = 0;
+                    this.deltaX = 0;
+                    this.deltaY = 0;
+                    this.down = false;
+                    this.moved = false;
+                    this.color = [0, 0, 0];
+                }
+
+                let config = {
+                    SIM_RESOLUTION: 128,
+                    DYE_RESOLUTION: 1024,
+                    CAPTURE_RESOLUTION: 512,
+                    DENSITY_DISSIPATION: 1,
+                    VELOCITY_DISSIPATION: 0.2,
+                    PRESSURE: 0.8,
+                    PRESSURE_ITERATIONS: 20,
+                    CURL: 30,
+                    SPLAT_RADIUS: 0.25,
+                    SPLAT_FORCE: 6000,
+                    SHADING: true,
+                    COLOR_UPDATE_SPEED: 10,
+                    PAUSED: false,
+                    BACK_COLOR: { r: 0, g: 0, b: 0 },
+                    TRANSPARENT: true
+                };
+
+                let pointers = [new pointerPrototype()];
+
+                const { gl, ext } = getWebGLContext(canvas);
+                if (!ext.supportLinearFiltering) {
+                    config.DYE_RESOLUTION = 256;
+                    config.SHADING = false;
+                }
+
+                function getWebGLContext(canvas) {
+                    const params = {
+                        alpha: true,
+                        depth: false,
+                        stencil: false,
+                        antialias: false,
+                        preserveDrawingBuffer: false
+                    };
+                    let gl = canvas.getContext('webgl2', params);
+                    const isWebGL2 = !!gl;
+                    if (!isWebGL2) gl = canvas.getContext('webgl', params) || canvas.getContext('experimental-webgl', params);
+
+                    let halfFloat;
+                    let supportLinearFiltering;
+                    if (isWebGL2) {
+                        gl.getExtension('EXT_color_buffer_float');
+                        supportLinearFiltering = gl.getExtension('OES_texture_float_linear');
+                    } else {
+                        halfFloat = gl.getExtension('OES_texture_half_float');
+                        supportLinearFiltering = gl.getExtension('OES_texture_half_float_linear');
+                    }
+                    gl.clearColor(0.0, 0.0, 0.0, 1.0);
+
+                    const halfFloatTexType = isWebGL2 ? gl.HALF_FLOAT : halfFloat && halfFloat.HALF_FLOAT_OES;
+                    let formatRGBA;
+                    let formatRG;
+                    let formatR;
+
+                    if (isWebGL2) {
+                        formatRGBA = getSupportedFormat(gl, gl.RGBA16F, gl.RGBA, halfFloatTexType);
+                        formatRG = getSupportedFormat(gl, gl.RG16F, gl.RG, halfFloatTexType);
+                        formatR = getSupportedFormat(gl, gl.R16F, gl.RED, halfFloatTexType);
+                    } else {
+                        formatRGBA = getSupportedFormat(gl, gl.RGBA, gl.RGBA, halfFloatTexType);
+                        formatRG = getSupportedFormat(gl, gl.RGBA, gl.RGBA, halfFloatTexType);
+                        formatR = getSupportedFormat(gl, gl.RGBA, gl.RGBA, halfFloatTexType);
+                    }
+
+                    return {
+                        gl,
+                        ext: {
+                            formatRGBA,
+                            formatRG,
+                            formatR,
+                            halfFloatTexType,
+                            supportLinearFiltering
+                        }
+                    };
+                }
+
+                function getSupportedFormat(gl, internalFormat, format, type) {
+                    if (!supportRenderTextureFormat(gl, internalFormat, format, type)) {
+                        switch (internalFormat) {
+                            case gl.R16F:
+                                return getSupportedFormat(gl, gl.RG16F, gl.RG, type);
+                            case gl.RG16F:
+                                return getSupportedFormat(gl, gl.RGBA16F, gl.RGBA, type);
+                            default:
+                                return null;
+                        }
+                    }
+                    return { internalFormat, format };
+                }
+
+                function supportRenderTextureFormat(gl, internalFormat, format, type) {
+                    const texture = gl.createTexture();
+                    gl.bindTexture(gl.TEXTURE_2D, texture);
+                    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
+                    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
+                    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+                    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+                    gl.texImage2D(gl.TEXTURE_2D, 0, internalFormat, 4, 4, 0, format, type, null);
+                    const fbo = gl.createFramebuffer();
+                    gl.bindFramebuffer(gl.FRAMEBUFFER, fbo);
+                    gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, texture, 0);
+                    const status = gl.checkFramebufferStatus(gl.FRAMEBUFFER);
+                    return status === gl.FRAMEBUFFER_COMPLETE;
+                }
+
+                class Material {
+                    constructor(vertexShader, fragmentShaderSource) {
+                        this.vertexShader = vertexShader;
+                        this.fragmentShaderSource = fragmentShaderSource;
+                        this.programs = [];
+                        this.activeProgram = null;
+                        this.uniforms = [];
+                    }
+                    setKeywords(keywords) {
+                        let hash = 0;
+                        for (let i = 0; i < keywords.length; i++) hash += hashCode(keywords[i]);
+                        let program = this.programs[hash];
+                        if (program == null) {
+                            let fragmentShader = compileShader(gl.FRAGMENT_SHADER, this.fragmentShaderSource, keywords);
+                            program = createProgram(this.vertexShader, fragmentShader);
+                            this.programs[hash] = program;
+                        }
+                        if (program === this.activeProgram) return;
+                        this.uniforms = getUniforms(program);
+                        this.activeProgram = program;
+                    }
+                    bind() {
+                        gl.useProgram(this.activeProgram);
+                    }
+                }
+
+                class Program {
+                    constructor(vertexShader, fragmentShader) {
+                        this.uniforms = {};
+                        this.program = createProgram(vertexShader, fragmentShader);
+                        this.uniforms = getUniforms(this.program);
+                    }
+                    bind() {
+                        gl.useProgram(this.program);
+                    }
+                }
+
+                function createProgram(vertexShader, fragmentShader) {
+                    let program = gl.createProgram();
+                    gl.attachShader(program, vertexShader);
+                    gl.attachShader(program, fragmentShader);
+                    gl.linkProgram(program);
+                    if (!gl.getProgramParameter(program, gl.LINK_STATUS)) console.trace(gl.getProgramInfoLog(program));
+                    return program;
+                }
+
+                function getUniforms(program) {
+                    let uniforms = [];
+                    let uniformCount = gl.getProgramParameter(program, gl.ACTIVE_UNIFORMS);
+                    for (let i = 0; i < uniformCount; i++) {
+                        let uniformName = gl.getActiveUniform(program, i).name;
+                        uniforms[uniformName] = gl.getUniformLocation(program, uniformName);
+                    }
+                    return uniforms;
+                }
+
+                function compileShader(type, source, keywords) {
+                    source = addKeywords(source, keywords);
+                    const shader = gl.createShader(type);
+                    gl.shaderSource(shader, source);
+                    gl.compileShader(shader);
+                    if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) console.trace(gl.getShaderInfoLog(shader));
+                    return shader;
+                }
+
+                function addKeywords(source, keywords) {
+                    if (!keywords) return source;
+                    let keywordsString = '';
+                    keywords.forEach(keyword => {
+                        keywordsString += '#define ' + keyword + '\n';
+                    });
+                    return keywordsString + source;
+                }
+
+                const baseVertexShader = compileShader(gl.VERTEX_SHADER,`
+                    precision highp float;
+                    attribute vec2 aPosition;
+                    varying vec2 vUv;
+                    varying vec2 vL;
+                    varying vec2 vR;
+                    varying vec2 vT;
+                    varying vec2 vB;
+                    uniform vec2 texelSize;
+                    void main () {
+                        vUv = aPosition * 0.5 + 0.5;
+                        vL = vUv - vec2(texelSize.x, 0.0);
+                        vR = vUv + vec2(texelSize.x, 0.0);
+                        vT = vUv + vec2(0.0, texelSize.y);
+                        vB = vUv - vec2(0.0, texelSize.y);
+                        gl_Position = vec4(aPosition, 0.0, 1.0);
+                    }
+                `);
+
+                const copyShader = compileShader(gl.FRAGMENT_SHADER, `
+                    precision mediump float;
+                    precision mediump sampler2D;
+                    varying highp vec2 vUv;
+                    uniform sampler2D uTexture;
+                    void main () {
+                        gl_FragColor = texture2D(uTexture, vUv);
+                    }
+                `);
+                
+                const clearShader = compileShader(gl.FRAGMENT_SHADER, `
+                    precision mediump float;
+                    precision mediump sampler2D;
+                    varying highp vec2 vUv;
+                    uniform sampler2D uTexture;
+                    uniform float value;
+                    void main () {
+                        gl_FragColor = value * texture2D(uTexture, vUv);
+                    }
+                `);
+
+                const displayShaderSource = `
+                    precision highp float;
+                    precision highp sampler2D;
+                    varying vec2 vUv;
+                    varying vec2 vL;
+                    varying vec2 vR;
+                    varying vec2 vT;
+                    varying vec2 vB;
+                    uniform sampler2D uTexture;
+                    uniform sampler2D uDithering;
+                    uniform vec2 ditherScale;
+                    uniform vec2 texelSize;
+                    vec3 linearToGamma (vec3 color) {
+                        color = max(color, vec3(0));
+                        return max(1.055 * pow(color, vec3(0.416666667)) - 0.055, vec3(0));
+                    }
+                    void main () {
+                        vec3 c = texture2D(uTexture, vUv).rgb;
+                        #ifdef SHADING
+                            vec3 lc = texture2D(uTexture, vL).rgb;
+                            vec3 rc = texture2D(uTexture, vR).rgb;
+                            vec3 tc = texture2D(uTexture, vT).rgb;
+                            vec3 bc = texture2D(uTexture, vB).rgb;
+                            float dx = length(rc) - length(lc);
+                            float dy = length(tc) - length(bc);
+                            vec3 n = normalize(vec3(dx, dy, length(texelSize)));
+                            vec3 l = vec3(0.0, 0.0, 1.0);
+                            float diffuse = clamp(dot(n, l) + 0.7, 0.7, 1.0);
+                            c *= diffuse;
+                        #endif
+                        float a = max(c.r, max(c.g, c.b));
+                        gl_FragColor = vec4(c, a);
+                    }
+                `;
+
+                const splatShader = compileShader(gl.FRAGMENT_SHADER,`
+                    precision highp float;
+                    precision highp sampler2D;
+                    varying vec2 vUv;
+                    uniform sampler2D uTarget;
+                    uniform float aspectRatio;
+                    uniform vec3 color;
+                    uniform vec2 point;
+                    uniform float radius;
+                    void main () {
+                        vec2 p = vUv - point.xy;
+                        p.x *= aspectRatio;
+                        vec3 splat = exp(-dot(p, p) / radius) * color;
+                        vec3 base = texture2D(uTarget, vUv).xyz;
+                        gl_FragColor = vec4(base + splat, 1.0);
+                    }
+                `);
+
+                const advectionShader = compileShader(gl.FRAGMENT_SHADER, `
+                    precision highp float;
+                    precision highp sampler2D;
+                    varying vec2 vUv;
+                    uniform sampler2D uVelocity;
+                    uniform sampler2D uSource;
+                    uniform vec2 texelSize;
+                    uniform vec2 dyeTexelSize;
+                    uniform float dt;
+                    uniform float dissipation;
+                    vec4 bilerp (sampler2D sam, vec2 uv, vec2 tsize) {
+                        vec2 st = uv / tsize - 0.5;
+                        vec2 iuv = floor(st);
+                        vec2 fuv = fract(st);
+                        vec4 a = texture2D(sam, (iuv + vec2(0.5, 0.5)) * tsize);
+                        vec4 b = texture2D(sam, (iuv + vec2(1.5, 0.5)) * tsize);
+                        vec4 c = texture2D(sam, (iuv + vec2(0.5, 1.5)) * tsize);
+                        vec4 d = texture2D(sam, (iuv + vec2(1.5, 1.5)) * tsize);
+                        return mix(mix(a, b, fuv.x), mix(c, d, fuv.x), fuv.y);
+                    }
+                    void main () {
+                        #ifdef MANUAL_FILTERING
+                            vec2 coord = vUv - dt * bilerp(uVelocity, vUv, texelSize).xy * texelSize;
+                            vec4 result = bilerp(uSource, coord, dyeTexelSize);
+                        #else
+                            vec2 coord = vUv - dt * texture2D(uVelocity, vUv).xy * texelSize;
+                            vec4 result = texture2D(uSource, coord);
+                        #endif
+                        float decay = 1.0 + dissipation * dt;
+                        gl_FragColor = result / decay;
+                    }
+                `, ext.supportLinearFiltering ? null : ['MANUAL_FILTERING']);
+                
+                const divergenceShader = compileShader(gl.FRAGMENT_SHADER,`
+                    precision mediump float;
+                    precision mediump sampler2D;
+                    varying highp vec2 vUv;
+                    varying highp vec2 vL;
+                    varying highp vec2 vR;
+                    varying highp vec2 vT;
+                    varying highp vec2 vB;
+                    uniform sampler2D uVelocity;
+                    void main () {
+                        float L = texture2D(uVelocity, vL).x;
+                        float R = texture2D(uVelocity, vR).x;
+                        float T = texture2D(uVelocity, vT).y;
+                        float B = texture2D(uVelocity, vB).y;
+                        vec2 C = texture2D(uVelocity, vUv).xy;
+                        if (vL.x < 0.0) { L = -C.x; }
+                        if (vR.x > 1.0) { R = -C.x; }
+                        if (vT.y > 1.0) { T = -C.y; }
+                        if (vB.y < 0.0) { B = -C.y; }
+                        float div = 0.5 * (R - L + T - B);
+                        gl_FragColor = vec4(div, 0.0, 0.0, 1.0);
+                    }
+                `);
+
+                const curlShader = compileShader(gl.FRAGMENT_SHADER, `
+                    precision mediump float;
+                    precision mediump sampler2D;
+                    varying highp vec2 vUv;
+                    varying highp vec2 vL;
+                    varying highp vec2 vR;
+                    varying highp vec2 vT;
+                    varying highp vec2 vB;
+                    uniform sampler2D uVelocity;
+                    void main () {
+                        float L = texture2D(uVelocity, vL).y;
+                        float R = texture2D(uVelocity, vR).y;
+                        float T = texture2D(uVelocity, vT).x;
+                        float B = texture2D(uVelocity, vB).x;
+                        float vorticity = R - L - T + B;
+                        gl_FragColor = vec4(0.5 * vorticity, 0.0, 0.0, 1.0);
+                    }
+                `);
+
+                const vorticityShader = compileShader(gl.FRAGMENT_SHADER,`
+                    precision highp float;
+                    precision highp sampler2D;
+                    varying vec2 vUv;
+                    varying vec2 vL;
+                    varying vec2 vR;
+                    varying vec2 vT;
+                    varying vec2 vB;
+                    uniform sampler2D uVelocity;
+                    uniform sampler2D uCurl;
+                    uniform float curl;
+                    uniform float dt;
+                    void main () {
+                        float L = texture2D(uCurl, vL).x;
+                        float R = texture2D(uCurl, vR).x;
+                        float T = texture2D(uCurl, vT).x;
+                        float B = texture2D(uCurl, vB).x;
+                        float C = texture2D(uCurl, vUv).x;
+                        vec2 force = 0.5 * vec2(abs(T) - abs(B), abs(R) - abs(L));
+                        force /= length(force) + 0.0001;
+                        force *= curl * C;
+                        force.y *= -1.0;
+                        vec2 velocity = texture2D(uVelocity, vUv).xy;
+                        velocity += force * dt;
+                        velocity = min(max(velocity, -1000.0), 1000.0);
+                        gl_FragColor = vec4(velocity, 0.0, 1.0);
+                    }
+                `);
+                
+                const pressureShader = compileShader(gl.FRAGMENT_SHADER, `
+                    precision mediump float;
+                    precision mediump sampler2D;
+                    varying highp vec2 vUv;
+                    varying highp vec2 vL;
+                    varying highp vec2 vR;
+                    varying highp vec2 vT;
+                    varying highp vec2 vB;
+                    uniform sampler2D uPressure;
+                    uniform sampler2D uDivergence;
+                    void main () {
+                        float L = texture2D(uPressure, vL).x;
+                        float R = texture2D(uPressure, vR).x;
+                        float T = texture2D(uPressure, vT).x;
+                        float B = texture2D(uPressure, vB).x;
+                        float C = texture2D(uPressure, vUv).x;
+                        float divergence = texture2D(uDivergence, vUv).x;
+                        float pressure = (L + R + B + T - divergence) * 0.25;
+                        gl_FragColor = vec4(pressure, 0.0, 0.0, 1.0);
+                    }
+                `);
+                
+                const gradientSubtractShader = compileShader(gl.FRAGMENT_SHADER, `
+                    precision mediump float;
+                    precision mediump sampler2D;
+                    varying highp vec2 vUv;
+                    varying highp vec2 vL;
+                    varying highp vec2 vR;
+                    varying highp vec2 vT;
+                    varying highp vec2 vB;
+                    uniform sampler2D uPressure;
+                    uniform sampler2D uVelocity;
+                    void main () {
+                        float L = texture2D(uPressure, vL).x;
+                        float R = texture2D(uPressure, vR).x;
+                        float T = texture2D(uPressure, vT).x;
+                        float B = texture2D(uPressure, vB).x;
+                        vec2 velocity = texture2D(uVelocity, vUv).xy;
+                        velocity.xy -= vec2(R - L, T - B);
+                        gl_FragColor = vec4(velocity, 0.0, 1.0);
+                    }
+                `);
+
+                const blit = (() => {
+                    gl.bindBuffer(gl.ARRAY_BUFFER, gl.createBuffer());
+                    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, -1, 1, 1, 1, 1, -1]), gl.STATIC_DRAW);
+                    gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, gl.createBuffer());
+                    gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array([0, 1, 2, 0, 2, 3]), gl.STATIC_DRAW);
+                    gl.vertexAttribPointer(0, 2, gl.FLOAT, false, 0, 0);
+                    gl.enableVertexAttribArray(0);
+                    return (target, clear = false) => {
+                        if (target == null) {
+                            gl.viewport(0, 0, gl.drawingBufferWidth, gl.drawingBufferHeight);
+                            gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+                        } else {
+                            gl.viewport(0, 0, target.width, target.height);
+                            gl.bindFramebuffer(gl.FRAMEBUFFER, target.fbo);
+                        }
+                        if (clear) {
+                            gl.clearColor(0.0, 0.0, 0.0, 1.0);
+                            gl.clear(gl.COLOR_BUFFER_BIT);
+                        }
+                        gl.drawElements(gl.TRIANGLES, 6, gl.UNSIGNED_SHORT, 0);
+                    };
+                })();
+
+                let dye, velocity, divergence, curl, pressure;
+                const copyProgram = new Program(baseVertexShader, copyShader);
+                const clearProgram = new Program(baseVertexShader, clearShader);
+                const splatProgram = new Program(baseVertexShader, splatShader);
+                const advectionProgram = new Program(baseVertexShader, advectionShader);
+                const divergenceProgram = new Program(baseVertexShader, divergenceShader);
+                const curlProgram = new Program(baseVertexShader, curlShader);
+                const vorticityProgram = new Program(baseVertexShader, vorticityShader);
+                const pressureProgram = new Program(baseVertexShader, pressureShader);
+                const gradienSubtractProgram = new Program(baseVertexShader, gradientSubtractShader);
+                const displayMaterial = new Material(baseVertexShader, displayShaderSource);
+
+                function initFramebuffers() {
+                    let simRes = getResolution(config.SIM_RESOLUTION);
+                    let dyeRes = getResolution(config.DYE_RESOLUTION);
+                    const texType = ext.halfFloatTexType;
+                    const rgba = ext.formatRGBA;
+                    const rg = ext.formatRG;
+                    const r = ext.formatR;
+                    const filtering = ext.supportLinearFiltering ? gl.LINEAR : gl.NEAREST;
+                    gl.disable(gl.BLEND);
+                    if (!dye) dye = createDoubleFBO(dyeRes.width, dyeRes.height, rgba.internalFormat, rgba.format, texType, filtering);
+                    else dye = resizeDoubleFBO(dye, dyeRes.width, dyeRes.height, rgba.internalFormat, rgba.format, texType, filtering);
+                    if (!velocity) velocity = createDoubleFBO(simRes.width, simRes.height, rg.internalFormat, rg.format, texType, filtering);
+                    else velocity = resizeDoubleFBO(velocity, simRes.width, simRes.height, rg.internalFormat, rg.format, texType, filtering);
+                    divergence = createFBO(simRes.width, simRes.height, r.internalFormat, r.format, texType, gl.NEAREST);
+                    curl = createFBO(simRes.width, simRes.height, r.internalFormat, r.format, texType, gl.NEAREST);
+                    pressure = createDoubleFBO(simRes.width, simRes.height, r.internalFormat, r.format, texType, gl.NEAREST);
+                }
+
+                function createFBO(w, h, internalFormat, format, type, param) {
+                    gl.activeTexture(gl.TEXTURE0);
+                    let texture = gl.createTexture();
+                    gl.bindTexture(gl.TEXTURE_2D, texture);
+                    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, param);
+                    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, param);
+                    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+                    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+                    gl.texImage2D(gl.TEXTURE_2D, 0, internalFormat, w, h, 0, format, type, null);
+                    let fbo = gl.createFramebuffer();
+                    gl.bindFramebuffer(gl.FRAMEBUFFER, fbo);
+                    gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, texture, 0);
+                    gl.viewport(0, 0, w, h);
+                    gl.clear(gl.COLOR_BUFFER_BIT);
+                    let texelSizeX = 1.0 / w;
+                    let texelSizeY = 1.0 / h;
+                    return { texture, fbo, width: w, height: h, texelSizeX, texelSizeY, attach(id) {
+                            gl.activeTexture(gl.TEXTURE0 + id);
+                            gl.bindTexture(gl.TEXTURE_2D, texture);
+                            return id;
+                        }
+                    };
+                }
+
+                function createDoubleFBO(w, h, internalFormat, format, type, param) {
+                    let fbo1 = createFBO(w, h, internalFormat, format, type, param);
+                    let fbo2 = createFBO(w, h, internalFormat, format, type, param);
+                    return {
+                        width: w, height: h, texelSizeX: fbo1.texelSizeX, texelSizeY: fbo1.texelSizeY,
+                        get read() { return fbo1; }, set read(value) { fbo1 = value; },
+                        get write() { return fbo2; }, set write(value) { fbo2 = value; },
+                        swap() { let temp = fbo1; fbo1 = fbo2; fbo2 = temp; }
+                    };
+                }
+
+                function resizeFBO(target, w, h, internalFormat, format, type, param) {
+                    let newFBO = createFBO(w, h, internalFormat, format, type, param);
+                    copyProgram.bind();
+                    gl.uniform1i(copyProgram.uniforms.uTexture, target.attach(0));
+                    blit(newFBO);
+                    return newFBO;
+                }
+
+                function resizeDoubleFBO(target, w, h, internalFormat, format, type, param) {
+                    if (target.width === w && target.height === h) return target;
+                    target.read = resizeFBO(target.read, w, h, internalFormat, format, type, param);
+                    target.write = createFBO(w, h, internalFormat, format, type, param);
+                    target.width = w;
+                    target.height = h;
+                    target.texelSizeX = 1.0 / w;
+                    target.texelSizeY = 1.0 / h;
+                    return target;
+                }
+
+                function updateKeywords() {
+                    let displayKeywords = [];
+                    if (config.SHADING) displayKeywords.push('SHADING');
+                    displayMaterial.setKeywords(displayKeywords);
+                }
+
+                updateKeywords();
+                initFramebuffers();
+                let lastUpdateTime = Date.now();
+                let colorUpdateTimer = 0.0;
+
+                function updateFrame() {
+                    const dt = calcDeltaTime();
+                    if (resizeCanvas()) initFramebuffers();
+                    updateColors(dt);
+                    applyInputs();
+                    step(dt);
+                    render(null);
+                    requestAnimationFrame(updateFrame);
+                }
+
+                function calcDeltaTime() {
+                    let now = Date.now();
+                    let dt = (now - lastUpdateTime) / 1000;
+                    dt = Math.min(dt, 0.016666);
+                    lastUpdateTime = now;
+                    return dt;
+                }
+
+                function resizeCanvas() {
+                    let width = scaleByPixelRatio(canvas.clientWidth);
+                    let height = scaleByPixelRatio(canvas.clientHeight);
+                    if (canvas.width !== width || canvas.height !== height) {
+                        canvas.width = width;
+                        canvas.height = height;
+                        return true;
+                    }
+                    return false;
+                }
+
+                function updateColors(dt) {
+                    colorUpdateTimer += dt * config.COLOR_UPDATE_SPEED;
+                    if (colorUpdateTimer >= 1) {
+                        colorUpdateTimer = wrap(colorUpdateTimer, 0, 1);
+                        pointers.forEach(p => { p.color = generateColor(); });
+                    }
+                }
+
+                function applyInputs() {
+                    pointers.forEach(p => { if (p.moved) { p.moved = false; splatPointer(p); } });
+                }
+
+                function step(dt) {
+                    gl.disable(gl.BLEND);
+                    curlProgram.bind();
+                    gl.uniform2f(curlProgram.uniforms.texelSize, velocity.texelSizeX, velocity.texelSizeY);
+                    gl.uniform1i(curlProgram.uniforms.uVelocity, velocity.read.attach(0));
+                    blit(curl);
+                    vorticityProgram.bind();
+                    gl.uniform2f(vorticityProgram.uniforms.texelSize, velocity.texelSizeX, velocity.texelSizeY);
+                    gl.uniform1i(vorticityProgram.uniforms.uVelocity, velocity.read.attach(0));
+                    gl.uniform1i(vorticityProgram.uniforms.uCurl, curl.attach(1));
+                    gl.uniform1f(vorticityProgram.uniforms.curl, config.CURL);
+                    gl.uniform1f(vorticityProgram.uniforms.dt, dt);
+                    blit(velocity.write);
+                    velocity.swap();
+                    divergenceProgram.bind();
+                    gl.uniform2f(divergenceProgram.uniforms.texelSize, velocity.texelSizeX, velocity.texelSizeY);
+                    gl.uniform1i(divergenceProgram.uniforms.uVelocity, velocity.read.attach(0));
+                    blit(divergence);
+                    clearProgram.bind();
+                    gl.uniform1i(clearProgram.uniforms.uTexture, pressure.read.attach(0));
+                    gl.uniform1f(clearProgram.uniforms.value, config.PRESSURE);
+                    blit(pressure.write);
+                    pressure.swap();
+                    pressureProgram.bind();
+                    gl.uniform2f(pressureProgram.uniforms.texelSize, velocity.texelSizeX, velocity.texelSizeY);
+                    gl.uniform1i(pressureProgram.uniforms.uDivergence, divergence.attach(0));
+                    for (let i = 0; i < config.PRESSURE_ITERATIONS; i++) {
+                        gl.uniform1i(pressureProgram.uniforms.uPressure, pressure.read.attach(1));
+                        blit(pressure.write);
+                        pressure.swap();
+                    }
+                    gradienSubtractProgram.bind();
+                    gl.uniform2f(gradienSubtractProgram.uniforms.texelSize, velocity.texelSizeX, velocity.texelSizeY);
+                    gl.uniform1i(gradienSubtractProgram.uniforms.uPressure, pressure.read.attach(0));
+                    gl.uniform1i(gradienSubtractProgram.uniforms.uVelocity, velocity.read.attach(1));
+                    blit(velocity.write);
+                    velocity.swap();
+                    advectionProgram.bind();
+                    gl.uniform2f(advectionProgram.uniforms.texelSize, velocity.texelSizeX, velocity.texelSizeY);
+                    if (!ext.supportLinearFiltering) gl.uniform2f(advectionProgram.uniforms.dyeTexelSize, velocity.texelSizeX, velocity.texelSizeY);
+                    let velocityId = velocity.read.attach(0);
+                    gl.uniform1i(advectionProgram.uniforms.uVelocity, velocityId);
+                    gl.uniform1i(advectionProgram.uniforms.uSource, velocityId);
+                    gl.uniform1f(advectionProgram.uniforms.dt, dt);
+                    gl.uniform1f(advectionProgram.uniforms.dissipation, config.VELOCITY_DISSIPATION);
+                    blit(velocity.write);
+                    velocity.swap();
+                    if (!ext.supportLinearFiltering) gl.uniform2f(advectionProgram.uniforms.dyeTexelSize, dye.texelSizeX, dye.texelSizeY);
+                    gl.uniform1i(advectionProgram.uniforms.uVelocity, velocity.read.attach(0));
+                    gl.uniform1i(advectionProgram.uniforms.uSource, dye.read.attach(1));
+                    gl.uniform1f(advectionProgram.uniforms.dissipation, config.DENSITY_DISSIPATION);
+                    blit(dye.write);
+                    dye.swap();
+                }
+
+                function render(target) {
+                    gl.blendFunc(gl.ONE, gl.ONE_MINUS_SRC_ALPHA);
+                    gl.enable(gl.BLEND);
+                    drawDisplay(target);
+                }
+
+                function drawDisplay(target) {
+                    let width = target == null ? gl.drawingBufferWidth : target.width;
+                    let height = target == null ? gl.drawingBufferHeight : target.height;
+                    displayMaterial.bind();
+                    if (config.SHADING) gl.uniform2f(displayMaterial.uniforms.texelSize, 1.0 / width, 1.0 / height);
+                    gl.uniform1i(displayMaterial.uniforms.uTexture, dye.read.attach(0));
+                    blit(target);
+                }
+
+                function splatPointer(pointer) {
+                    let dx = pointer.deltaX * config.SPLAT_FORCE;
+                    let dy = pointer.deltaY * config.SPLAT_FORCE;
+                    splat(pointer.texcoordX, pointer.texcoordY, dx, dy, pointer.color);
+                }
+
+                function clickSplat(pointer) {
+                    const color = generateColor();
+                    color.r *= 10.0;
+                    color.g *= 10.0;
+                    color.b *= 10.0;
+                    let dx = 10 * (Math.random() - 0.5);
+                    let dy = 30 * (Math.random() - 0.5);
+                    splat(pointer.texcoordX, pointer.texcoordY, dx, dy, color);
+                }
+
+                function splat(x, y, dx, dy, color) {
+                    splatProgram.bind();
+                    gl.uniform1i(splatProgram.uniforms.uTarget, velocity.read.attach(0));
+                    gl.uniform1f(splatProgram.uniforms.aspectRatio, canvas.width / canvas.height);
+                    gl.uniform2f(splatProgram.uniforms.point, x, y);
+                    gl.uniform3f(splatProgram.uniforms.color, dx, dy, 0.0);
+                    gl.uniform1f(splatProgram.uniforms.radius, correctRadius(config.SPLAT_RADIUS / 100.0));
+                    blit(velocity.write);
+                    velocity.swap();
+                    gl.uniform1i(splatProgram.uniforms.uTarget, dye.read.attach(0));
+                    gl.uniform3f(splatProgram.uniforms.color, color.r, color.g, color.b);
+                    blit(dye.write);
+                    dye.swap();
+                }
+
+                function correctRadius(radius) {
+                    let aspectRatio = canvas.width / canvas.height;
+                    if (aspectRatio > 1) radius *= aspectRatio;
+                    return radius;
+                }
+
+                function updatePointerDownData(pointer, id, posX, posY) {
+                    pointer.id = id;
+                    pointer.down = true;
+                    pointer.moved = false;
+                    pointer.texcoordX = posX / canvas.width;
+                    pointer.texcoordY = 1.0 - posY / canvas.height;
+                    pointer.prevTexcoordX = pointer.texcoordX;
+                    pointer.prevTexcoordY = pointer.texcoordY;
+                    pointer.deltaX = 0;
+                    pointer.deltaY = 0;
+                    pointer.color = generateColor();
+                }
+
+                function updatePointerMoveData(pointer, posX, posY, color) {
+                    pointer.prevTexcoordX = pointer.texcoordX;
+                    pointer.prevTexcoordY = pointer.texcoordY;
+                    pointer.texcoordX = posX / canvas.width;
+                    pointer.texcoordY = 1.0 - posY / canvas.height;
+                    pointer.deltaX = correctDeltaX(pointer.texcoordX - pointer.prevTexcoordX);
+                    pointer.deltaY = correctDeltaY(pointer.texcoordY - pointer.prevTexcoordY);
+                    pointer.moved = Math.abs(pointer.deltaX) > 0 || Math.abs(pointer.deltaY) > 0;
+                    pointer.color = color;
+                }
+
+                function updatePointerUpData(pointer) {
+                    pointer.down = false;
+                }
+
+                function correctDeltaX(delta) {
+                    let aspectRatio = canvas.width / canvas.height;
+                    if (aspectRatio < 1) delta *= aspectRatio;
+                    return delta;
+                }
+
+                function correctDeltaY(delta) {
+                    let aspectRatio = canvas.width / canvas.height;
+                    if (aspectRatio > 1) delta /= aspectRatio;
+                    return delta;
+                }
+
+                function generateColor() {
+                    let c = HSVtoRGB(Math.random(), 1.0, 1.0);
+                    c.r *= 0.15;
+                    c.g *= 0.15;
+                    c.b *= 0.15;
+                    return c;
+                }
+
+                function HSVtoRGB(h, s, v) {
+                    let r, g, b, i, f, p, q, t;
+                    i = Math.floor(h * 6);
+                    f = h * 6 - i;
+                    p = v * (1 - s);
+                    q = v * (1 - f * s);
+                    t = v * (1 - (1 - f) * s);
+                    switch (i % 6) {
+                        case 0: r = v; g = t; b = p; break;
+                        case 1: r = q; g = v; b = p; break;
+                        case 2: r = p; g = v; b = t; break;
+                        case 3: r = p; g = q; b = v; break;
+                        case 4: r = t; g = p; b = v; break;
+                        case 5: r = v; g = p; b = q; break;
+                        default: break;
+                    }
+                    return { r, g, b };
+                }
+
+                function wrap(value, min, max) {
+                    const range = max - min;
+                    if (range === 0) return min;
+                    return ((value - min) % range) + min;
+                }
+
+                function getResolution(resolution) {
+                    let aspectRatio = gl.drawingBufferWidth / gl.drawingBufferHeight;
+                    if (aspectRatio < 1) aspectRatio = 1.0 / aspectRatio;
+                    const min = Math.round(resolution);
+                    const max = Math.round(resolution * aspectRatio);
+                    if (gl.drawingBufferWidth > gl.drawingBufferHeight) return { width: max, height: min };
+                    else return { width: min, height: max };
+                }
+
+                function scaleByPixelRatio(input) {
+                    const pixelRatio = window.devicePixelRatio || 1;
+                    return Math.floor(input * pixelRatio);
+                }
+
+                function hashCode(s) {
+                    if (s.length === 0) return 0;
+                    let hash = 0;
+                    for (let i = 0; i < s.length; i++) {
+                        hash = (hash << 5) - hash + s.charCodeAt(i);
+                        hash |= 0;
+                    }
+                    return hash;
+                }
+                
+                window.addEventListener('mousedown', e => {
+                    let pointer = pointers[0];
+                    let posX = scaleByPixelRatio(e.clientX);
+                    let posY = scaleByPixelRatio(e.clientY);
+                    updatePointerDownData(pointer, -1, posX, posY);
+                    clickSplat(pointer);
+                });
+
+                window.addEventListener('mousemove', e => {
+                    let pointer = pointers[0];
+                    let posX = scaleByPixelRatio(e.clientX);
+                    let posY = scaleByPixelRatio(e.clientY);
+                    updatePointerMoveData(pointer, posX, posY, pointer.color);
+                });
+
+                window.addEventListener('touchstart', e => {
+                    const touches = e.targetTouches;
+                    let pointer = pointers[0];
+                    for (let i = 0; i < touches.length; i++) {
+                        let posX = scaleByPixelRatio(touches[i].clientX);
+                        let posY = scaleByPixelRatio(touches[i].clientY);
+                        updatePointerDownData(pointer, touches[i].identifier, posX, posY);
+                    }
+                });
+
+                window.addEventListener('touchmove', e => {
+                    const touches = e.targetTouches;
+                    let pointer = pointers[0];
+                    for (let i = 0; i < touches.length; i++) {
+                        let posX = scaleByPixelRatio(touches[i].clientX);
+                        let posY = scaleByPixelRatio(touches[i].clientY);
+                        updatePointerMoveData(pointer, posX, posY, pointer.color);
+                    }
+                }, false);
+
+                window.addEventListener('touchend', e => {
+                    const touches = e.changedTouches;
+                    let pointer = pointers[0];
+                    for (let i = 0; i < touches.length; i++) {
+                        updatePointerUpData(pointer);
+                    }
+                });
+
+                updateFrame();
+            }
+
+            initFluidCursor();
+        });
+    </script>
+
+</body>
+</html>
+
